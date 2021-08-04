@@ -1,4 +1,6 @@
-﻿using Prism.Ioc;
+﻿using Explore.Views;
+using MapGen;
+using Prism.Ioc;
 using Prism.Unity;
 using System;
 using System.Collections.Generic;
@@ -25,7 +27,9 @@ namespace Explore
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-
+            var noise = new Noise();
+            var generator = new Generator(noise);
+            containerRegistry.RegisterInstance<IGenerator>(generator);
         }
     }
 }
