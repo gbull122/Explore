@@ -27,7 +27,7 @@ namespace Explore
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            var noise = new Noise();
+            var noise = new PerlinNoise(13);
             var generator = new Generator(noise);
             containerRegistry.RegisterInstance<IGenerator>(generator);
         }

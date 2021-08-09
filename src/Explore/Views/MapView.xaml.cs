@@ -1,4 +1,8 @@
-﻿using System.Windows.Controls;
+﻿using Explore.Visuals;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace Explore.Views
 {
@@ -7,6 +11,7 @@ namespace Explore.Views
     /// </summary>
     public partial class MapView : UserControl
     {
+       
         public MapView()
         {
             InitializeComponent();

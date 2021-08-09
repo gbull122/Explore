@@ -6,6 +6,47 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Explore.Views">
     <Grid>
-            
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="10*"/>
+        </Grid.ColumnDefinitions>
+
+        <Button
+            x:Name="BtnNewMap"
+            Grid.Column="0"
+            Content="New Map"
+            Command="{Binding GenCommand}"/>
+
+        <Grid
+            x:Name ="cvMapImage" 
+            Grid.Column="1"
+            >
+            <Image 
+                x:Name="imgMap" 
+                Source="{Binding ImageMap}"
+                Stretch="Fill"/>
+        </Grid>
+        
+        <ItemsControl 
+            x:Name="ItemsCtlMapOverlay"
+            Grid.Column="1"
+            ItemsSource="{Binding Path=MapVisuals,Mode=TwoWay}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas 
+                        x:Name="CvMapOverlay"
+                        Width="{Binding Width, ElementName=ItemsControlMap}" 
+                        Height="{Binding Height, ElementName=ItemsControlMap}"
+                        Background="Transparent"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemContainerStyle>
+                <Style TargetType="ContentPresenter">
+                    <Setter Property="Canvas.Top" Value="{Binding PosTop}"/>
+                    <Setter Property="Canvas.Left" Value="{Binding PosLeft}"/>
+                </Style>
+            </ItemsControl.ItemContainerStyle>
+        </ItemsControl>
+
     </Grid>
 </UserControl>

@@ -6,21 +6,17 @@ namespace MapGenTests
     [TestFixture]
     public class NoiseTests
     {
-        [SetUp]
-        public void Setup()
-        {
-        }
 
         [Test]
         public void NoiseTest_1()
         {
             var expectedValue = 0.13691995878400012;
 
-            Noise noise = new Noise();
+            PerlinNoise noise = new PerlinNoise(12);
 
-            var actualValue = noise.NoisePoint(3.14, 42, 7);
+            var actualValue = noise.Noise(3.14, 1, 1);
 
-            Assert.That(actualValue, Is.EqualTo(expectedValue));
+            Assert.That(actualValue, Is.InRange(0,255));
         }
     }
 }
