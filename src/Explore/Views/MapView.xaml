@@ -6,30 +6,21 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Explore.Views">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="10*"/>
-        </Grid.ColumnDefinitions>
 
-        <Button
-            x:Name="BtnNewMap"
-            Grid.Column="0"
-            Content="New Map"
-            Command="{Binding GenCommand}"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="10*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
 
-        <Grid
-            x:Name ="cvMapImage" 
-            Grid.Column="1"
-            >
-            <Image 
-                x:Name="imgMap" 
-                Source="{Binding ImageMap}"
-                Stretch="Fill"/>
-        </Grid>
-        
+        <Image 
+            Grid.RowSpan="2"
+            x:Name="imgMap" 
+            Source="{Binding ImageMap}"
+            Stretch="Fill"/>
+
         <ItemsControl 
             x:Name="ItemsCtlMapOverlay"
-            Grid.Column="1"
+            Grid.RowSpan="2"
             ItemsSource="{Binding Path=MapVisuals,Mode=TwoWay}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -47,6 +38,19 @@
                 </Style>
             </ItemsControl.ItemContainerStyle>
         </ItemsControl>
+
+        <DockPanel
+            Background="Transparent"
+            Grid.Row="1" >
+
+            <Button 
+                Style="{StaticResource ButtonStyle1}"
+                x:Name="BtnNewMap"
+                Grid.Column="0"
+                Content="New Map"
+                MaxWidth="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
+                Command="{Binding GenCommand}"/>
+        </DockPanel>
 
     </Grid>
 </UserControl>

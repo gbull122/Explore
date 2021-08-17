@@ -19,10 +19,8 @@ namespace MapGenTests
             var width = 2;
 
             var expectedMapCount = 4;
-            var noise = A.Fake<INoise>();
-            A.CallTo(() => noise.Noise(A<double>._, A<double>._, A<double>._)).Returns(1);
 
-            var generator = new Generator(noise);
+            var generator = new Generator();
 
             var actualMap = generator.CreateNoiseMap(width, height);
             var actualMapCount = actualMap.Count();
@@ -37,10 +35,8 @@ namespace MapGenTests
             var width = 4;
 
             var expectedMapCount = 8;
-            var noise = A.Fake<INoise>();
-            A.CallTo(() => noise.Noise(A<double>._, A<double>._, A<double>._)).Returns(1);
 
-            var generator = new Generator(noise);
+            var generator = new Generator();
 
             var actualMap = generator.CreateNoiseMap(width, height);
             var actualMapCount = actualMap.Count();
@@ -54,10 +50,9 @@ namespace MapGenTests
             var height = 3;
             var width = 3;
 
-            var imageArray = new double[] {1,2,3,4,5,6,7,8,9 };
-            var noise = A.Fake<INoise>();
+            var imageArray = new float[] {1,2,3,4,5,6,7,8,9 };
 
-            var generator = new Generator(noise);
+            var generator = new Generator();
 
             var actualImage = generator.CreateMapImage(imageArray, width, height);
 

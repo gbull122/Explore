@@ -4,9 +4,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Explore"
     xmlns:prism="http://prismlibrary.com/">
-    
-    <Application.Resources>
 
+    <Application.Resources>
+        <ResourceDictionary Source="Resources\DictionaryExplore.xaml"/>
     </Application.Resources>
-    
+
 </prism:PrismApplication>

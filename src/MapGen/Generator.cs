@@ -1,64 +1,87 @@
-﻿using System;
+﻿using SharpNoise;
+using SharpNoise.Builders;
+using SharpNoise.Modules;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using System.Windows.Media.Imaging;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace MapGen
 {
     public interface IGenerator
     {
-        double[] CreateNoiseMap(int width, int height);
-        ImageSource CreateMapImage(double[] mapData, int width, int height);
+        float[] CreateNoiseMap(int width, int height);
+        ImageSource CreateMapImage(float[] mapData, int width, int height);
     }
 
     public class Generator : IGenerator
     {
-        private INoise noise;
 
-        public Generator(INoise noise)
+
+        public Generator()
         {
-            this.noise = noise;
+            
         }
 
-        /// <summary>
-        /// https://lotsacode.wordpress.com/2010/02/24/perlin-noise-in-c/
-        /// </summary>
-        public double[] CreateNoiseMap(int width, int height)
+
+        public float[] CreateNoiseMap(int width, int height)
         {
-            double[] mapData = new double[width * height];
-
-            double widthDivisor = 1 / (double)width;
-            double heightDivisor = 1 / (double)height;
-
-            for (int i = 1; i <= width; i++)
+            var noiseSource = new Perlin
             {
-                for (int j = 1; j <= height; j++)
-                {
+                Seed = new Random().Next()
+            };
 
-                    var idx = ((i-1) * width) + j-1;
+            // Create a new, empty, noise map and initialize a new planar noise map builder with it
+            var noiseMap = new NoiseMap();
+            var noiseMapBuilder = new PlaneNoiseMapBuilder
+            {
+                DestNoiseMap = noiseMap,
+                SourceModule = noiseSource
+            };
 
+            // Set the size of the noise map
+            noiseMapBuilder.SetDestSize(width, height);
 
-                    // First octave
-                    var oct1 = (noise.Noise(2 * i * widthDivisor, 2 * j * heightDivisor, -0.5) + 1) / 2 * 0.7;
-                    // Second octave
-                    var oct2 = (noise.Noise(4 * i * widthDivisor, 4 * j * heightDivisor, 0) + 1) / 2 * 0.2;
-                    // Third octave
-                    var oct3 = (noise.Noise(8 * i * widthDivisor, 8 * j * heightDivisor, +0.5) + 1) / 2 * 0.1;
-                    mapData[idx] = 255*(oct1+oct2+oct3);
-                }
+            // Set the bounds of the noise mpa builder
+            // These are the coordinates in the noise source from which noise values will be sampled
+            noiseMapBuilder.SetBounds(-3, 3, -2, 2);
 
-            }
-            return mapData;
+            // Build the noise map - samples values from the noise module above,
+            // using the bounds coordinates we have passed in the builder
+            noiseMapBuilder.Build();
+
+            return noiseMap.Data;
         }
 
-        public ImageSource CreateMapImage(double[] mapData, int width,int height)
+        public float[] Normalise(float[] data, double min, double max)
         {
+            var minVal = data.Min();
+            var maxVal = data.Max();
 
-            BitmapSource bitmapMap = BitmapSource.Create(width, height, 96, 96, PixelFormats.Gray8, null, mapData, width);
+            double slope = (max - min) / (maxVal - minVal);
+            double offset = min - minVal * slope;
+            var result = new float[data.Length];
+
+            for (int i = 0; i < data.Length; i++)
+            {
+                result[i] = (int)(slope * data[i] + offset);
+            }
+
+            return result;
+        }
+
+        public ImageSource CreateMapImage(float[] mapData, int width, int height)
+        {
+            List<Color> colors = new List<Color>();
+            for (int i = 0; i < 256; i++)
+            {
+                colors.Add(Color.FromRgb((byte)i, (byte)i, (byte)i));
+            }
+            var bitmapPalette = new BitmapPalette(colors);
+
+            var normed = Normalise(mapData, 0, 255);
+            BitmapSource bitmapMap = BitmapSource.Create(width, height, 96, 96, PixelFormats.Gray8, bitmapPalette, normed, width);
 
             return bitmapMap;
         }

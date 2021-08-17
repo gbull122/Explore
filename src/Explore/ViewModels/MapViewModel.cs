@@ -3,11 +3,7 @@ using MapGen;
 using Prism.Commands;
 using Prism.Mvvm;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
 
 namespace Explore.ViewModels
@@ -48,9 +44,13 @@ namespace Explore.ViewModels
 
         private void GenMap(string obj)
         {
-            var mapData = generator.CreateNoiseMap(100, 100);
+            int width = 1000;
+            int height = 750;
 
-            ImageMap = generator.CreateMapImage(mapData,100,100);
+
+            var mapData = generator.CreateNoiseMap(width, height);
+
+            ImageMap = generator.CreateMapImage(mapData, width, height);
         }
     }
 }
