@@ -54,7 +54,7 @@ namespace MapGenTests
 
             var generator = new Generator();
 
-            var actualImage = generator.CreateMapImage(imageArray, width, height);
+            var actualImage = generator.CreateMapImage();
 
             var actualWidth = actualImage.Width;
             var actualHeight = actualImage.Height;

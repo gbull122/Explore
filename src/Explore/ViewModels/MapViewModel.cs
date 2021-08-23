@@ -48,9 +48,9 @@ namespace Explore.ViewModels
             int height = 750;
 
 
-            var mapData = generator.CreateNoiseMap(width, height);
+            generator.CreateNoiseMap(width,height);
 
-            ImageMap = generator.CreateMapImage(mapData, width, height);
+            ImageMap = generator.CreateMapImage();
         }
     }
 }

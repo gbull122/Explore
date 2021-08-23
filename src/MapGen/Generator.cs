@@ -1,8 +1,10 @@
 ﻿using SharpNoise;
 using SharpNoise.Builders;
 using SharpNoise.Modules;
+using SharpNoise.Utilities.Imaging;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -11,13 +13,13 @@ namespace MapGen
 {
     public interface IGenerator
     {
-        float[] CreateNoiseMap(int width, int height);
-        ImageSource CreateMapImage(float[] mapData, int width, int height);
+        void CreateNoiseMap(int width, int height);
+        ImageSource CreateMapImage();
     }
 
     public class Generator : IGenerator
     {
-
+        private NoiseMap noiseMap;
 
         public Generator()
         {
@@ -25,7 +27,7 @@ namespace MapGen
         }
 
 
-        public float[] CreateNoiseMap(int width, int height)
+        public void CreateNoiseMap(int width, int height)
         {
             var noiseSource = new Perlin
             {
@@ -33,7 +35,7 @@ namespace MapGen
             };
 
             // Create a new, empty, noise map and initialize a new planar noise map builder with it
-            var noiseMap = new NoiseMap();
+            noiseMap = new NoiseMap();
             var noiseMapBuilder = new PlaneNoiseMapBuilder
             {
                 DestNoiseMap = noiseMap,
@@ -51,39 +53,40 @@ namespace MapGen
             // using the bounds coordinates we have passed in the builder
             noiseMapBuilder.Build();
 
-            return noiseMap.Data;
         }
 
-        public float[] Normalise(float[] data, double min, double max)
+
+
+        public ImageSource CreateMapImage()
         {
-            var minVal = data.Min();
-            var maxVal = data.Max();
 
-            double slope = (max - min) / (maxVal - minVal);
-            double offset = min - minVal * slope;
-            var result = new float[data.Length];
-
-            for (int i = 0; i < data.Length; i++)
+            var imageMap = new ImageMap();
+            var renderer = new ImageRenderer
             {
-                result[i] = (int)(slope * data[i] + offset);
-            }
+                SourceNoiseMap = noiseMap,
+                DestinationImage = imageMap
+            };
 
-            return result;
-        }
+            renderer.BuildTerrainGradient();
 
-        public ImageSource CreateMapImage(float[] mapData, int width, int height)
-        {
-            List<Color> colors = new List<Color>();
-            for (int i = 0; i < 256; i++)
-            {
-                colors.Add(Color.FromRgb((byte)i, (byte)i, (byte)i));
-            }
-            var bitmapPalette = new BitmapPalette(colors);
+            // Before rendering the image, we could set various parameters on the renderer,
+            // such as the position and color of the light source.
+            // But we aren't going to bother for this sample.
 
-            var normed = Normalise(mapData, 0, 255);
-            BitmapSource bitmapMap = BitmapSource.Create(width, height, 96, 96, PixelFormats.Gray8, bitmapPalette, normed, width);
+            // Finally, render the image
+            renderer.Render();
 
-            return bitmapMap;
+            var bitmapMap = imageMap.ToGdiBitmap();
+
+
+            var bitmapData = bitmapMap.LockBits(new Rectangle(0, 0, bitmapMap.Width, bitmapMap.Height),System.Drawing.Imaging.ImageLockMode.ReadOnly, bitmapMap.PixelFormat);
+
+            var bitmapSource = BitmapSource.Create( bitmapData.Width, bitmapData.Height, bitmapMap.HorizontalResolution, bitmapMap.VerticalResolution,PixelFormats.Pbgra32, null,bitmapData.Scan0, bitmapData.Stride * bitmapData.Height, bitmapData.Stride);
+
+            bitmapMap.UnlockBits(bitmapData);
+            
+
+            return bitmapSource;
         }
     }
 }

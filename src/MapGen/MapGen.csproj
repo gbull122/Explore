@@ -7,7 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SharpNoise" Version="0.12.1.1" />
+    <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="SharpNoise">
+      <HintPath>..\..\..\SharpNoise\SharpNoise\bin\x64\Release\net5.0\SharpNoise.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpNoise.Utilities">
+      <HintPath>..\..\..\SharpNoise\SharpNoise.Utilities\bin\x64\Release\net5.0\SharpNoise.Utilities.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
